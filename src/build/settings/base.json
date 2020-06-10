@@ -1,0 +1,6 @@
+{
+    "app_name": "Clustering",
+    "author": "GuglielmoSanchini",
+    "main_module": "src/main/python/gui.py",
+    "version": "0.0.0"
+}
