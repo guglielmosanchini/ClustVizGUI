@@ -3,13 +3,13 @@
 block_cipher = None
 
 
-a = Analysis(['/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/src/main/python/gui.py'],
-             pathex=['/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/target/PyInstaller'],
+a = Analysis(['/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/src/main/python/gui.py'],
+             pathex=['/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/target/PyInstaller'],
              binaries=[],
              datas=[],
              hiddenimports=[],
-             hookspath=['/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/venv/lib/python3.6/site-packages/fbs/freeze/hooks'],
-             runtime_hooks=['/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/target/PyInstaller/fbs_pyinstaller_hook.py'],
+             hookspath=['/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/venv/lib/python3.6/site-packages/fbs/freeze/hooks'],
+             runtime_hooks=['/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/target/PyInstaller/fbs_pyinstaller_hook.py'],
              excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=False,
-          console=False , icon='/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/target/Icon.icns')
+          console=False , icon='/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/target/Icon.icns')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -36,5 +36,5 @@ coll = COLLECT(exe,
                name='Clustering')
 app = BUNDLE(coll,
              name='Clustering.app',
-             icon='/Users/guglielmosanchini/PycharmProjects/Personal/Clustering/target/Icon.icns',
+             icon='/Users/guglielmosanchini/PycharmProjects/Personal/ClustVizGUI/target/Icon.icns',
              bundle_identifier=None)

@@ -1,7 +1,16 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QGridLayout, QGroupBox, QTabWidget, QWidget, \
-    QVBoxLayout, QTabBar
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QPushButton,
+    QGridLayout,
+    QGroupBox,
+    QTabWidget,
+    QWidget,
+    QVBoxLayout,
+    QTabBar,
+)
 
 from PyQt5.QtGui import QFont
+
 # import qdarkstyle
 import sys
 
@@ -91,21 +100,47 @@ class Main_Window(QWidget):
         gridlayout_alg = QGridLayout(self.initial_tab.groupbox_alg)
 
         # buttons and functions dictionaries
-        self.button_dictionary = {1: "OPTICS", 2: "DBSCAN", 3: "AGGLOMERATIVE", 4: "DENCLUE",
-                                  5: "CURE", 6: "LARGE CURE", 7: "PAM", 8: "CLARA", 9: "CLARANS", 10: "BIRCH",
-                                  11: "CHAMELEON", 12: "CHAMELEON2"}
-        self.swapped_button_dictionary = dict([(value, key) for key, value in self.button_dictionary.items()])
+        self.button_dictionary = {
+            1: "OPTICS",
+            2: "DBSCAN",
+            3: "AGGLOMERATIVE",
+            4: "DENCLUE",
+            5: "CURE",
+            6: "LARGE CURE",
+            7: "PAM",
+            8: "CLARA",
+            9: "CLARANS",
+            10: "BIRCH",
+            11: "CHAMELEON",
+            12: "CHAMELEON2",
+        }
+        self.swapped_button_dictionary = dict(
+            [(value, key) for key, value in self.button_dictionary.items()]
+        )
 
-        self.functions = {1: self.open_OPTICS, 2: self.open_DBSCAN, 3: self.open_AGGLOMERATIVE, 4: self.open_DENCLUE,
-                          5: self.open_CURE, 6: self.open_LARGE_CURE, 7: self.open_PAM, 8: self.open_CLARA,
-                          9: self.open_CLARANS, 10: self.open_BIRCH, 11: self.open_CHAMELEON, 12: self.open_CHAMELEON2}
+        self.functions = {
+            1: self.open_OPTICS,
+            2: self.open_DBSCAN,
+            3: self.open_AGGLOMERATIVE,
+            4: self.open_DENCLUE,
+            5: self.open_CURE,
+            6: self.open_LARGE_CURE,
+            7: self.open_PAM,
+            8: self.open_CLARA,
+            9: self.open_CLARANS,
+            10: self.open_BIRCH,
+            11: self.open_CHAMELEON,
+            12: self.open_CHAMELEON2,
+        }
 
         # buttons
         self.initial_tab.buttons = []
         k = 0
         h = 0
         for i, (key, value) in enumerate(self.button_dictionary.items()):
-            self.initial_tab.buttons.append(QPushButton(self.button_dictionary[key], self))
+            self.initial_tab.buttons.append(
+                QPushButton(self.button_dictionary[key], self)
+            )
             self.initial_tab.buttons[-1].clicked.connect(self.functions[key])
             gridlayout_alg.addWidget(self.initial_tab.buttons[-1], h, k)
             if k != 3:
@@ -255,7 +290,9 @@ class Main_Window(QWidget):
         self.tabs.removeTab(currentIndex)
         self.current_index -= 1
         temp_index = self.open_tab_dict[currentIndex]
-        self.initial_tab.buttons[self.swapped_button_dictionary[temp_index] - 1].setEnabled(True)
+        self.initial_tab.buttons[
+            self.swapped_button_dictionary[temp_index] - 1
+        ].setEnabled(True)
 
         # the following serves the purpose of readjusting self.open_tab_dict
         del self.open_tab_dict[currentIndex]
@@ -271,7 +308,6 @@ class Main_Window(QWidget):
 
 
 class main(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Clustering Algorithms Visualization")
@@ -280,24 +316,25 @@ class main(QMainWindow):
         self.table_widget = Main_Window(self)
         self.setCentralWidget(self.table_widget)
 
-        self.statusBar().showMessage('https://github.com/guglielmosanchini/ClustVizGUI')
+        self.statusBar().showMessage("https://github.com/guglielmosanchini/ClustVizGUI")
 
         self.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # QApplication.setStyle('Fusion')
     # app = QApplication(sys.argv)
     # appctxt = ApplicationContext()
     from base import appctxt
+
     # pg.setConfigOption('background', 'w')
     # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     win = main()
     win.update()
 
     try:
-        #sys.exit(app.exec_())
+        # sys.exit(app.exec_())
         sys.exit(appctxt.app.exec_())
     except:
         print("Exiting")

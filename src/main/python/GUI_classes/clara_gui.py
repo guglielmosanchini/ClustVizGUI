@@ -8,10 +8,18 @@ from GUI_classes.utils_gui import choose_dataset, pause_execution
 from GUI_classes.generic_gui import StartingGui
 from base import appctxt
 
+
 class CLARA_class(StartingGui):
     def __init__(self):
-        super(CLARA_class, self).__init__(name="CLARA", twinx=False, first_plot=True, second_plot=False,
-                                          function=self.start_CLARA, extract=False, stretch_plot=False)
+        super(CLARA_class, self).__init__(
+            name="CLARA",
+            twinx=False,
+            first_plot=True,
+            second_plot=False,
+            function=self.start_CLARA,
+            extract=False,
+            stretch_plot=False,
+        )
 
     def start_CLARA(self):
         self.ax1.cla()
@@ -47,8 +55,14 @@ class CLARA_class(StartingGui):
 
         self.checkbox_gif.setEnabled(False)
 
-        CLARA = ClaraClustering_gui(log=self.log, ax=self.ax1, canvas=self.canvas_up, save_fig=self.save_plots,
-                                    ind_run=self.ind_run, delay=self.delay)
+        CLARA = ClaraClustering_gui(
+            log=self.log,
+            ax=self.ax1,
+            canvas=self.canvas_up,
+            save_fig=self.save_plots,
+            ind_run=self.ind_run,
+            delay=self.delay,
+        )
 
         CLARA.clara(self.X, self.n_medoids, self.dist_clara)
 
@@ -113,7 +127,9 @@ class ClaraClustering_gui(object):
                 self.log.clear()
                 self.log.appendPlainText("ERROR")
                 self.log.appendPlainText("")
-                self.log.appendPlainText("The dimension of the input dataset must be at least 40 + 2*n_medoids")
+                self.log.appendPlainText(
+                    "The dimension of the input dataset must be at least 40 + 2*n_medoids"
+                )
                 return
             else:
                 sampling_idx = random.sample([i for i in range(size)], 40 + _k * 2)
@@ -128,12 +144,22 @@ class ClaraClustering_gui(object):
             sampled_df = pd.DataFrame(sampling_data, index=sampling_idx)
 
             # return total cost, medoids and clusters of sampled_df
-            pre_cost, pre_choice, pre_medoids = self.k_medoids(sampled_df, _k, _fn, niter)
+            pre_cost, pre_choice, pre_medoids = self.k_medoids(
+                sampled_df, _k, _fn, niter
+            )
             if self.delay != 0:
                 pause_execution(self.delay)
 
-            self.plot_pam_mod_gui(data=sampled_df, ax=self.ax, canvas=self.canvas, cl=pre_medoids, full=_df,
-                                  ind_run=self.ind_run, ind_fig=index_for_saving_plot, save_plots=self.save_fig)
+            self.plot_pam_mod_gui(
+                data=sampled_df,
+                ax=self.ax,
+                canvas=self.canvas,
+                cl=pre_medoids,
+                full=_df,
+                ind_run=self.ind_run,
+                ind_fig=index_for_saving_plot,
+                save_plots=self.save_fig,
+            )
 
             self.log.appendPlainText("")
             self.log.appendPlainText("RESULTS OF K-MEDOIDS")
@@ -150,8 +176,11 @@ class ClaraClustering_gui(object):
             self.log.appendPlainText("tmp_medoids: {}".format(tmp_medoids))
             # if the new cost is lower
             if tmp_avg_cost < min_avg_cost:
-                self.log.appendPlainText("new_cost is lower, from {0} to {1}".format(round(min_avg_cost, 4),
-                                                                                     round(tmp_avg_cost, 4)))
+                self.log.appendPlainText(
+                    "new_cost is lower, from {0} to {1}".format(
+                        round(min_avg_cost, 4), round(tmp_avg_cost, 4)
+                    )
+                )
                 min_avg_cost = tmp_avg_cost
                 best_choices = list(pre_choice)
                 best_results = dict(tmp_medoids)
@@ -167,8 +196,16 @@ class ClaraClustering_gui(object):
         self.log.appendPlainText("FINAL RESULT")
         if self.delay != 0:
             pause_execution(self.delay)
-        self.plot_pam_mod_gui(data=_df, ax=self.ax, canvas=self.canvas, cl=best_results, full=_df,
-                              ind_run=self.ind_run, ind_fig=None, save_plots=self.save_fig)
+        self.plot_pam_mod_gui(
+            data=_df,
+            ax=self.ax,
+            canvas=self.canvas,
+            cl=best_results,
+            full=_df,
+            ind_run=self.ind_run,
+            ind_fig=None,
+            save_plots=self.save_fig,
+        )
 
         return min_avg_cost, best_choices, best_results
 
@@ -209,7 +246,9 @@ class ClaraClustering_gui(object):
                         idx = medoids_sample.index(m)
                         swap_temp = medoids_sample[idx]
                         medoids_sample[idx] = item
-                        tmp_cost, tmp_medoids = self.compute_cost(_df, _fn, medoids_sample, True)
+                        tmp_cost, tmp_medoids = self.compute_cost(
+                            _df, _fn, medoids_sample, True
+                        )
 
                         if (tmp_cost < current_cost) & (clust_iter < 1):
                             best_choices = list(medoids_sample)
@@ -226,14 +265,19 @@ class ClaraClustering_gui(object):
 
             iter_count += 1
             if best_choices == medoids_sample:
-                self.log.appendPlainText('Best configuration found! best_choices: {}'.format(best_choices))
+                self.log.appendPlainText(
+                    "Best configuration found! best_choices: {}".format(best_choices)
+                )
                 break
 
             if current_cost <= prior_cost:
                 if current_cost < prior_cost:
-                    self.log.appendPlainText("Better configuration found! curr_cost:{0}, "
-                                             "prior_cost:{1}".format(round(current_cost, 2),
-                                                                     round(prior_cost, 2)))
+                    self.log.appendPlainText(
+                        "Better configuration found! curr_cost:{0}, "
+                        "prior_cost:{1}".format(
+                            round(current_cost, 2), round(prior_cost, 2)
+                        )
+                    )
                 else:
                     self.log.appendPlainText("Equal cost")
                 prior_cost = current_cost
@@ -265,18 +309,19 @@ class ClaraClustering_gui(object):
                     tmp = self.dist_cache.get((m, i), None)
 
                 if not cache_on or tmp is None:
-                    if _fn == 'manhattan':
+                    if _fn == "manhattan":
                         tmp = self.manhattan_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'cosine':
+                    elif _fn == "cosine":
                         tmp = self.cosine_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'euclidean':
+                    elif _fn == "euclidean":
                         tmp = self.euclidean_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'fast_euclidean':
+                    elif _fn == "fast_euclidean":
                         tmp = self.fast_euclidean(_df.loc[m], _df.loc[i])
                     else:
                         self.log.appendPlainText(
-                            'You need to input a valid distance function (manhattan, cosine, euclidean or '
-                            'fast_euclidean).')
+                            "You need to input a valid distance function (manhattan, cosine, euclidean or "
+                            "fast_euclidean)."
+                        )
 
                 if cache_on:
                     self.dist_cache[(m, i)] = tmp
@@ -372,7 +417,18 @@ class ClaraClustering_gui(object):
             xy += a1 * a2
         return float(xy) / np.sqrt(xx * yy)
 
-    def plot_pam_mod_gui(self, data, ax, canvas, cl, full, ind_run, ind_fig, name="CLARA", save_plots=False):
+    def plot_pam_mod_gui(
+        self,
+        data,
+        ax,
+        canvas,
+        cl,
+        full,
+        ind_run,
+        ind_fig,
+        name="CLARA",
+        save_plots=False,
+    ):
         """
         Scatterplot of data points, with colors according to cluster labels. Only sampled
         points are plotted, the others are only displayed with their indexes; moreover,
@@ -396,30 +452,77 @@ class ClaraClustering_gui(object):
             ax.set_title("{} final clustering".format(name))
 
         # just as a habit, it actually doesnt plot anything because points are white with white edgecolor
-        ax.scatter(full.iloc[:, 0], full.iloc[:, 1], s=300, color="white", edgecolor="white")
+        ax.scatter(
+            full.iloc[:, 0], full.iloc[:, 1], s=300, color="white", edgecolor="white"
+        )
 
-        colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
-                  6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown', 11: 'tan',
-                  12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+        colors = {
+            0: "seagreen",
+            1: "lightcoral",
+            2: "yellow",
+            3: "grey",
+            4: "pink",
+            5: "turquoise",
+            6: "orange",
+            7: "purple",
+            8: "yellowgreen",
+            9: "olive",
+            10: "brown",
+            11: "tan",
+            12: "plum",
+            13: "rosybrown",
+            14: "lightblue",
+            15: "khaki",
+            16: "gainsboro",
+            17: "peachpuff",
+        }
 
         # plot the sampled point, with colors according to the cluster they belong to
         for i, el in enumerate(list(cl.values())):
-            ax.scatter(data.loc[el, 0], data.loc[el, 1], s=300, color=colors[i % 18], edgecolor="black")
+            ax.scatter(
+                data.loc[el, 0],
+                data.loc[el, 1],
+                s=300,
+                color=colors[i % 18],
+                edgecolor="black",
+            )
 
         # plot centers of mass, marked with an X
         for i, el in enumerate(list(cl.keys())):
-            ax.scatter(data.loc[el, 0], data.loc[el, 1], s=500, color="red", marker="X", edgecolor="black")
+            ax.scatter(
+                data.loc[el, 0],
+                data.loc[el, 1],
+                s=500,
+                color="red",
+                marker="X",
+                edgecolor="black",
+            )
 
         # plot indexes of points in plot
         for i, txt in enumerate([i for i in range(len(full))]):
-            ax.annotate(txt, (full.iloc[i, 0], full.iloc[i, 1]), fontsize=10, size=10, ha='center', va='center')
+            ax.annotate(
+                txt,
+                (full.iloc[i, 0], full.iloc[i, 1]),
+                fontsize=10,
+                size=10,
+                ha="center",
+                va="center",
+            )
 
         canvas.draw()
 
         if save_plots is True:
             if ind_fig is not None:
-                canvas.figure.savefig(appctxt.get_resource("Images/") + '/' + '{}_{:02}/fig_{:02}.png'.format(name, ind_run, ind_fig))
+                canvas.figure.savefig(
+                    appctxt.get_resource("Images/")
+                    + "/"
+                    + "{}_{:02}/fig_{:02}.png".format(name, ind_run, ind_fig)
+                )
             else:
-                canvas.figure.savefig(appctxt.get_resource("Images/") + '/' + '{}_{:02}/fig_fin.png'.format(name, ind_run))
+                canvas.figure.savefig(
+                    appctxt.get_resource("Images/")
+                    + "/"
+                    + "{}_{:02}/fig_fin.png".format(name, ind_run)
+                )
 
         QCoreApplication.processEvents()

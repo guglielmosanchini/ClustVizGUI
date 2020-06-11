@@ -11,13 +11,23 @@ from GUI_classes.pam_gui import KMedoids_gui
 from GUI_classes.generic_gui import StartingGui, GraphWindow
 from base import appctxt
 
+
 class CLARANS_class(StartingGui):
     def __init__(self):
-        super(CLARANS_class, self).__init__(name="CLARANS", twinx=False, first_plot=True, second_plot=False,
-                                            function=self.start_CLARANS, extract=False, stretch_plot=False)
+        super(CLARANS_class, self).__init__(
+            name="CLARANS",
+            twinx=False,
+            first_plot=True,
+            second_plot=False,
+            function=self.start_CLARANS,
+            extract=False,
+            stretch_plot=False,
+        )
 
         self.example_index = 0
-        self.button_examples_graph.clicked.connect(lambda: self.openGraphWindow(self.example_index))
+        self.button_examples_graph.clicked.connect(
+            lambda: self.openGraphWindow(self.example_index)
+        )
 
     def start_CLARANS(self):
         self.ax1.cla()
@@ -55,10 +65,18 @@ class CLARANS_class(StartingGui):
 
         self.checkbox_gif.setEnabled(False)
 
-        clarans_gui(data=self.X, number_clusters=self.n_medoids, numlocal=self.numlocal_clarans,
-                    maxneighbor=self.maxneighbors_clarans, log=self.log, ax=self.ax1,
-                    canvas=self.canvas_up, save_fig=self.save_plots, ind_run=self.ind_run,
-                    delay=self.delay).process(plotting=True)
+        clarans_gui(
+            data=self.X,
+            number_clusters=self.n_medoids,
+            numlocal=self.numlocal_clarans,
+            maxneighbor=self.maxneighbors_clarans,
+            log=self.log,
+            ax=self.ax1,
+            canvas=self.canvas_up,
+            save_fig=self.save_plots,
+            ind_run=self.ind_run,
+            delay=self.delay,
+        ).process(plotting=True)
 
         if (self.make_gif is True) and (self.save_plots is True):
             self.generate_GIF()
@@ -87,7 +105,19 @@ class clarans_gui:
 
     """
 
-    def __init__(self, data, number_clusters, numlocal, maxneighbor, log, ax, canvas, save_fig, ind_run, delay):
+    def __init__(
+        self,
+        data,
+        number_clusters,
+        numlocal,
+        maxneighbor,
+        log,
+        ax,
+        canvas,
+        save_fig,
+        ind_run,
+        delay,
+    ):
         """!
         @brief Constructor of clustering algorithm CLARANS.
         @details The higher the value of maxneighbor, the closer is CLARANS to K-Medoids, and the longer is each
@@ -117,12 +147,19 @@ class clarans_gui:
         self.__belong = []
 
         self.__optimal_medoids = []
-        self.__optimal_estimation = float('inf')
+        self.__optimal_estimation = float("inf")
 
         self.__verify_arguments()
 
-        self.PAM = KMedoids_gui(n_cluster=self.__number_clusters, log=self.log, ax=self.ax, canvas=self.canvas,
-                                save_fig=self.save_fig, ind_run=self.ind_run, delay=self.delay)
+        self.PAM = KMedoids_gui(
+            n_cluster=self.__number_clusters,
+            log=self.log,
+            ax=self.ax,
+            canvas=self.canvas,
+            save_fig=self.save_fig,
+            ind_run=self.ind_run,
+            delay=self.delay,
+        )
 
     def __verify_arguments(self):
         """!
@@ -130,18 +167,27 @@ class clarans_gui:
 
         """
         if len(self.__pointer_data) == 0:
-            raise ValueError("Input data is empty (size: '%d')." % len(self.__pointer_data))
+            raise ValueError(
+                "Input data is empty (size: '%d')." % len(self.__pointer_data)
+            )
 
         if self.__number_clusters <= 0:
-            raise ValueError("Amount of cluster (current value: '%d') for allocation should be greater than 0." %
-                             self.__number_clusters)
+            raise ValueError(
+                "Amount of cluster (current value: '%d') for allocation should be greater than 0."
+                % self.__number_clusters
+            )
 
         if self.__numlocal < 0:
-            raise ValueError("Local minima (current value: '%d') should be greater or equal to 0." % self.__numlocal)
+            raise ValueError(
+                "Local minima (current value: '%d') should be greater or equal to 0."
+                % self.__numlocal
+            )
 
         if self.__maxneighbor < 0:
-            raise ValueError("Maximum number of neighbors (current value: '%d') should be greater or "
-                             "equal to 0." % self.__maxneighbor)
+            raise ValueError(
+                "Maximum number of neighbors (current value: '%d') should be greater or "
+                "equal to 0." % self.__maxneighbor
+            )
 
     def process(self, plotting=False):
         """!
@@ -163,7 +209,9 @@ class clarans_gui:
             self.log.appendPlainText("")
             self.log.appendPlainText("numlocal (iteration): {}".format(_ + 1))
             # set (current) random medoids
-            self.__current = random.sample(range(0, len(self.__pointer_data)), self.__number_clusters)
+            self.__current = random.sample(
+                range(0, len(self.__pointer_data)), self.__number_clusters
+            )
 
             # update clusters in line with random allocated medoids
             self.__update_clusters(self.__current)
@@ -174,8 +222,10 @@ class clarans_gui:
             # obtain cost of current cluster configuration and compare it with the best obtained
             estimation = self.__calculate_estimation()
             if estimation < self.__optimal_estimation:
-                self.log.appendPlainText("Better configuration found with "
-                                         "medoids: {0} and cost: {1}".format(self.__current[:], estimation))
+                self.log.appendPlainText(
+                    "Better configuration found with "
+                    "medoids: {0} and cost: {1}".format(self.__current[:], estimation)
+                )
                 self.__optimal_medoids = self.__current[:]
                 self.__optimal_estimation = estimation
 
@@ -183,23 +233,36 @@ class clarans_gui:
                     self.__update_clusters(self.__optimal_medoids)
                     if self.delay != 0:
                         pause_execution(self.delay)
-                    self.PAM.plot_pam_gui(data=self.__pointer_data, name="CLARANS",
-                                          cl=dict(zip(self.__optimal_medoids, self.__clusters)),
-                                          ax=self.ax, canvas=self.canvas, ind_run=self.ind_run,
-                                          ind_fig=index_for_saving_plots, save_plots=self.save_fig
-                                          )
+                    self.PAM.plot_pam_gui(
+                        data=self.__pointer_data,
+                        name="CLARANS",
+                        cl=dict(zip(self.__optimal_medoids, self.__clusters)),
+                        ax=self.ax,
+                        canvas=self.canvas,
+                        ind_run=self.ind_run,
+                        ind_fig=index_for_saving_plots,
+                        save_plots=self.save_fig,
+                    )
 
             else:
-                self.log.appendPlainText("Configuration found does not improve current "
-                                         "best one because its cost is {0}".format(estimation))
+                self.log.appendPlainText(
+                    "Configuration found does not improve current "
+                    "best one because its cost is {0}".format(estimation)
+                )
                 if plotting is True:
                     self.__update_clusters(self.__current[:])
                     if self.delay != 0:
                         pause_execution(self.delay)
-                    self.PAM.plot_pam_gui(data=self.__pointer_data, cl=dict(zip(self.__current[:], self.__clusters)),
-                                          ax=self.ax, canvas=self.canvas, ind_run=self.ind_run, name="CLARANS",
-                                          ind_fig=index_for_saving_plots, save_plots=self.save_fig
-                                          )
+                    self.PAM.plot_pam_gui(
+                        data=self.__pointer_data,
+                        cl=dict(zip(self.__current[:], self.__clusters)),
+                        ax=self.ax,
+                        canvas=self.canvas,
+                        ind_run=self.ind_run,
+                        name="CLARANS",
+                        ind_fig=index_for_saving_plots,
+                        save_plots=self.save_fig,
+                    )
 
             index_for_saving_plots += 1
         self.__update_clusters(self.__optimal_medoids)
@@ -209,10 +272,16 @@ class clarans_gui:
             self.log.appendPlainText("FINAL RESULT")
             if self.delay != 0:
                 pause_execution(self.delay)
-            self.PAM.plot_pam_gui(data=self.__pointer_data, cl=dict(zip(self.__optimal_medoids, self.__clusters)),
-                                  ax=self.ax, canvas=self.canvas, ind_run=self.ind_run, name="CLARANS",
-                                  ind_fig=None, save_plots=self.save_fig
-                                  )
+            self.PAM.plot_pam_gui(
+                data=self.__pointer_data,
+                cl=dict(zip(self.__optimal_medoids, self.__clusters)),
+                ax=self.ax,
+                canvas=self.canvas,
+                ind_run=self.ind_run,
+                name="CLARANS",
+                ind_fig=None,
+                save_plots=self.save_fig,
+            )
 
         return self
 
@@ -267,7 +336,10 @@ class clarans_gui:
             dist_optim = 0.0
 
             for index in range(len(medoids)):
-                dist = euclidean_distance_square(self.__pointer_data[index_point], self.__pointer_data[medoids[index]])
+                dist = euclidean_distance_square(
+                    self.__pointer_data[index_point],
+                    self.__pointer_data[medoids[index]],
+                )
 
                 if (dist < dist_optim) or (index is 0):
                     index_optim = index
@@ -288,7 +360,9 @@ class clarans_gui:
         counter = 0
         while index_neighbor < self.__maxneighbor:
             # get random current medoid that is to be replaced
-            current_medoid_index = self.__current[random.randint(0, self.__number_clusters - 1)]
+            current_medoid_index = self.__current[
+                random.randint(0, self.__number_clusters - 1)
+            ]
             current_medoid_cluster_index = self.__belong[current_medoid_index]
 
             # get new candidate to be medoid
@@ -305,24 +379,33 @@ class clarans_gui:
                     point_medoid_index = self.__current[point_cluster_index]
 
                     # get other medoid that is nearest to the point (except current and candidate)
-                    other_medoid_index = self.__find_another_nearest_medoid(point_index, current_medoid_index)
+                    other_medoid_index = self.__find_another_nearest_medoid(
+                        point_index, current_medoid_index
+                    )
                     other_medoid_cluster_index = self.__belong[other_medoid_index]
 
                     # for optimization calculate all required distances
                     # from the point to current medoid
-                    distance_current = euclidean_distance_square(self.__pointer_data[point_index],
-                                                                 self.__pointer_data[current_medoid_index])
+                    distance_current = euclidean_distance_square(
+                        self.__pointer_data[point_index],
+                        self.__pointer_data[current_medoid_index],
+                    )
 
                     # from the point to candidate median
-                    distance_candidate = euclidean_distance_square(self.__pointer_data[point_index],
-                                                                   self.__pointer_data[candidate_medoid_index])
+                    distance_candidate = euclidean_distance_square(
+                        self.__pointer_data[point_index],
+                        self.__pointer_data[candidate_medoid_index],
+                    )
 
                     # from the point to nearest (own) medoid
-                    distance_nearest = float('inf')
-                    if ((point_medoid_index != candidate_medoid_index) and (
-                            point_medoid_index != current_medoid_cluster_index)):
-                        distance_nearest = euclidean_distance_square(self.__pointer_data[point_index],
-                                                                     self.__pointer_data[point_medoid_index])
+                    distance_nearest = float("inf")
+                    if (point_medoid_index != candidate_medoid_index) and (
+                        point_medoid_index != current_medoid_cluster_index
+                    ):
+                        distance_nearest = euclidean_distance_square(
+                            self.__pointer_data[point_index],
+                            self.__pointer_data[point_medoid_index],
+                        )
 
                     # apply rules for cost calculation
                     if point_cluster_index == current_medoid_cluster_index:
@@ -338,7 +421,7 @@ class clarans_gui:
                         # case 3 ('nearest medoid' is the representative object of that cluster and object is
                         # more similar to 'nearest' than to 'candidate'):
                         if distance_candidate > distance_nearest:
-                            pass;
+                            pass
 
                         # case 4:
                         else:
@@ -372,11 +455,13 @@ class clarans_gui:
 
         """
         other_medoid_index = -1
-        other_distance_nearest = float('inf')
+        other_distance_nearest = float("inf")
         for index_medoid in self.__current:
             if index_medoid != current_medoid_index:
-                other_distance_candidate = euclidean_distance_square(self.__pointer_data[point_index],
-                                                                     self.__pointer_data[current_medoid_index])
+                other_distance_candidate = euclidean_distance_square(
+                    self.__pointer_data[point_index],
+                    self.__pointer_data[current_medoid_index],
+                )
 
                 if other_distance_candidate < other_distance_nearest:
                     other_distance_nearest = other_distance_candidate
@@ -397,10 +482,8 @@ class clarans_gui:
             cluster = self.__clusters[index_cluster]
             index_medoid = self.__current[index_cluster]
             for index_point in cluster:
-                estimation += euclidean_distance_square(self.__pointer_data[index_point],
-                                                        self.__pointer_data[index_medoid])
+                estimation += euclidean_distance_square(
+                    self.__pointer_data[index_point], self.__pointer_data[index_medoid]
+                )
 
         return estimation
-
-
-
